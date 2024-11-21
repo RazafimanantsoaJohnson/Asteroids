@@ -40,7 +40,7 @@ def main():
             for shot in shots:
                 if asteroid.check_collide(shot):
                     shot.kill()
-                    asteroid.kill()
+                    asteroid.split()
                
         for updatable in updatables:
             updatable.update(dt)
