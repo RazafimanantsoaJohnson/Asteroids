@@ -1,6 +1,7 @@
 import pygame
 from circleshape import CircleShape
 from constants import *
+from shot import Shot
 
 class Player(CircleShape):
 
@@ -9,6 +10,7 @@ class Player(CircleShape):
         # rotation is not a typical property, it's a property that is defined and used in our Sprite parent to draw our 
         # visual element with the rotation we want.
         self.rotation= 0
+        self.timer= 0       # a variable that will be set to a value at each shot and checked if >0 (to prevent us from shooting too many times)
 
     def  triangle(self):
         forward= pygame.Vector2(0,1).rotate(self.rotation)
@@ -25,6 +27,7 @@ class Player(CircleShape):
 
     def update(self,dt):
         keys= pygame.key.get_pressed()
+        self.timer -= dt
 
         if keys[pygame.K_a]:
             self.rotate(dt* -1) 
@@ -35,6 +38,20 @@ class Player(CircleShape):
             self.move(dt)
         if keys[pygame.K_s]:
             self.move(-dt)
+        if keys[pygame.K_SPACE]:
+            self.shoot()
+
+    def shoot(self):
+        if self.timer > 0:
+            return
+        
+        shot= Shot(self.position.x, self.position.y)
+        shot.velocity= pygame.Vector2(0,1)
+        shot.velocity= shot.velocity.rotate(self.rotation)
+        shot.velocity= shot.velocity * PLAYER_SHOT_SPEED
+
+        self.timer= PLAYER_SHOOT_COOLDOWN
+
 
     def move(self,dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
